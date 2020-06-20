@@ -1,22 +1,10 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 const StockContext = React.createContext();
-//create API calls inside of context, call functions inside of other component
 
-// const getData = async () => {
-//   try{
-//     const res = await axios.get(`${BASE_COMPANY_INFO_URL}/AAPL`);
 
-//     const data = res.data;
 
-//     console.log(data);
-//     return data
-//   } catch (e) {
-//     console.error(e);
-//   }
-// }
-
-//data.profile.price, mktCap, beta, image, website
+//store data into financialInfo data frame
 export default class StockProvider extends Component {
   state = {
     companyInfo: [],
@@ -24,37 +12,36 @@ export default class StockProvider extends Component {
     wacc: '',
     stockPV: '',
     enterpriseVal: '',
-    loading: false,
+    loading: true,
     input: '',
   }
-  getStock = async (url,ticker) => {
+  getStock = async (url,url2,ticker,apikey) => {
     try {
-      const res = await axios.get(`${url}${ticker}`);
-      const data = res.data;
+      const res1 = await axios.get(`${url}${ticker}?apikey=${apikey}`);
+      const data1 = res1.data;
+      const res2 = await axios.get(`${url2}${ticker}?apikey=${apikey}`)
+      const data2 = res2.data;
+      const PE = data1[0].price / data2[0].eps;
       this.setState({
-        companyInfo: [data.profile.price,data.profile.mktCap,data.profile.beta,data.profile.image,data.profile.website]
+        companyInfo: [data1[0].image,data1[0].price,data1[0].mktCap,data1[0].beta,data2[0].revenue,data2[0].netIncome,data2[0].eps, PE],
+        loading: false,
       })
-      //console.log(this.state.companyInfo)
-      return data
+      console.log(this.state.companyInfo)
+      return data1
     } catch (e) {
       console.log(e)
     }
   }
   handleInput = (e) => {
+    e.preventDefault()
     this.setState({
       input: e.target.value
     }) 
   } 
-  getFinancials = async (url,ticker) => {
-    try {
-      const res = await axios.get(`${url}/${ticker}`);
-      const data = res.data;
-      console.log(data)
-      return data
-    } catch (e){
-      alert.error(e)
-    }
-  } 
+  calcPE = (price,eps) => {
+    let PE = price / eps;
+    return PE
+  }
   //Weighted average cost of capital
   calcWACC = (marketValueOfEquity, marketValueOfDebt, costOfEquity, costOfDebt, taxRate) => {
     let E = marketValueOfEquity;
@@ -73,12 +60,16 @@ export default class StockProvider extends Component {
     return Math.round(stockValue)
   }
   //Discounted cash flow model
-  DCF = () => {
-
+  DCF = (wacc,cf,period) => {
+    
+  }
+  costEquity = (beta,rf,rm) => {
+    let costOfEquity = rf + (beta * (rm-rf))
+    return Math.round(costOfEquity)
   }
   render() {
     return (
-      <StockContext.Provider value={{...this.state,getStock: this.getStock,getFinancials: this.getFinancials, handleInput: this.handleInput}}>
+      <StockContext.Provider value={{...this.state,getStock: this.getStock, handleInput: this.handleInput}}>
         {this.props.children}
       </StockContext.Provider>
     )
