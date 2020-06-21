@@ -1,79 +1,71 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {BASE_COMPANY_INFO_URL, FINANCIAL_STATEMENT_URL} from './sources'
-import {StockContext, StockConsumer} from './context'
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   root: {
-    width: '100%',
-  },
-  paper: {
+    width: '50%',
     marginTop: theme.spacing(3),
-    width: '100%',
     overflowX: 'auto',
-    marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 650,
+    minWidth: 700,
   },
-}));
+});
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+let id = 0;
+function createData(name, financialData) {
+  id += 1;
+  return { id, name, financialData};
 }
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+const data = [
+  createData('Market Capitalization', 123),
+  createData('Beta', 123),
+  createData('Revenue', 123),
+  createData('Net Revenue', 123),
+  createData('EPS', 123),
+  createData('P/E Ratio', 123),
 ];
 
-export default function StockData() {
-  const classes = useStyles();
-
+function FinancialTable(props) {
+  const { classes } = props;
+  //consider passing state through different component type (like in home.js) or passing through props
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <Table className={classes.table} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
-              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.name}>
+    <Paper className={classes.root}>
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Financial Information for INSERT COMPANY</TableCell>
+            <TableCell numeric></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map(n => {
+            return (
+              <TableRow key={n.id}>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {n.name}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
+                <TableCell numeric>{n.financialData}</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </div>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Paper>
   );
 }
 
 
+FinancialTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
-  
-
-
+export default withStyles(styles)(FinancialTable);
 

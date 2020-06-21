@@ -1,0 +1,19 @@
+{companyInfo.map((item,index) => {
+            if (companyInfo.indexOf(item) === 0) {
+              return <img key={Math.random()} src={item} className='company-logo' alt='Company Logo'/>
+            } else if (companyInfo.indexOf(item) === 1) {
+              return <p className='stock-price'>{`Price: ${currencyFormat(item)}`}</p>
+            } else if (companyInfo.indexOf(item) === 2){
+              return <p className='market-cap'>{`Market Capitalization: ${currencyFormat(item)}`}</p>
+            } else if (companyInfo.indexOf(item) === 3) {
+              return <p className='beta'>{`Beta: ${item}`}</p>
+            } else if (companyInfo.indexOf(item) === 4) {
+              return <p className='revenue'>{`Revenue: ${currencyFormat(item)}`}</p>
+            } else if (companyInfo.indexOf(item) === 5){
+              return <p className='net-revenue'>{`Net Revenue: ${currencyFormat(item)}`}</p>
+            } else if (companyInfo.indexOf(item) === 6) {
+              return <p className='eps'>{`EPS: $${item}`}</p>
+            } else if (companyInfo.indexOf(item) === 7) {
+              return <p className='pe-ratio'>{`P/E Ratio: ${roundToTwo(item)}`}</p>
+            }
+          })} 

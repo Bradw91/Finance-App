@@ -2,7 +2,13 @@ import React, { Component } from 'react'
 import axios from 'axios'
 const StockContext = React.createContext();
 
+function currencyFormat(num) {
+  return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
 
+function roundToTwo(num) {    
+  return +(Math.round(num + "e+2")  + "e-2");
+}
 
 //store data into financialInfo data frame
 export default class StockProvider extends Component {
@@ -15,6 +21,7 @@ export default class StockProvider extends Component {
     loading: true,
     input: '',
   }
+
   getStock = async (url,url2,ticker,apikey) => {
     try {
       const res1 = await axios.get(`${url}${ticker}?apikey=${apikey}`);
@@ -22,11 +29,12 @@ export default class StockProvider extends Component {
       const res2 = await axios.get(`${url2}${ticker}?apikey=${apikey}`)
       const data2 = res2.data;
       const PE = data1[0].price / data2[0].eps;
+      console.log(data1)
       this.setState({
-        companyInfo: [data1[0].image,data1[0].price,data1[0].mktCap,data1[0].beta,data2[0].revenue,data2[0].netIncome,data2[0].eps, PE],
+        companyInfo: [data1[0].companyName,data1[0].price],
+        financialInfo: [currencyFormat(data1[0].mktCap),roundToTwo(data1[0].beta),currencyFormat(data2[0].revenue),currencyFormat(data2[0].netIncome),currencyFormat(data2[0].eps), roundToTwo(PE)],
         loading: false,
       })
-      console.log(this.state.companyInfo)
       return data1
     } catch (e) {
       console.log(e)
