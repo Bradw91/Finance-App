@@ -10,14 +10,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {StockContext, StockConsumer} from './context'
-import {BASE_COMPANY_INFO_URL, FINANCIAL_STATEMENT_URL, API_KEY } from './sources'
+import {BASE_COMPANY_INFO_URL, HOST_URL, API_KEY } from './sources'
 
 //map company info
 
 class Home extends Component {
   static contextType = StockContext
   render(){
-    const {getStock,handleInput,companyInfo,input,financialInfo} = this.context
+    const {getStock,handleInput,financialInfo,input,companyInfo} = this.context
     return (
       <>
       <div>
@@ -35,7 +35,7 @@ class Home extends Component {
           value={input}
           onChange={handleInput}
         />
-        <Button onClick={() => getStock(BASE_COMPANY_INFO_URL,FINANCIAL_STATEMENT_URL,input, API_KEY)}>Search</Button>
+        <Button onClick={() => getStock(BASE_COMPANY_INFO_URL,input,HOST_URL, API_KEY)}>Search</Button>
         </div>
         <div>
         <Paper>
@@ -51,18 +51,18 @@ class Home extends Component {
         })}
         </div>
         <TableBody>
-        {financialInfo.map((item,index) => {
-            if (companyInfo.indexOf(item) === 0) {
+        {financialInfo.map((item) => {
+            if (financialInfo.indexOf(item) === 0) {
               console.log(item)
-            } else if (companyInfo.indexOf(item) === 1) {
+            } else if (financialInfo.indexOf(item) === 1) {
               console.log(item) 
-            } else if (companyInfo.indexOf(item) === 2){
+            } else if (financialInfo.indexOf(item) === 2){
               console.log(item)
-            } else if (companyInfo.indexOf(item) === 3) {
+            } else if (financialInfo.indexOf(item) === 3) {
               console.log(item)
-            } else if (companyInfo.indexOf(item) === 4) {
+            } else if (financialInfo.indexOf(item) === 4) {
               console.log(item)
-            } else if (companyInfo.indexOf(item) === 5){
+            } else if (financialInfo.indexOf(item) === 5){
               console.log(item)
             } 
           })} 

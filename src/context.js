@@ -21,21 +21,37 @@ export default class StockProvider extends Component {
     loading: true,
     input: '',
   }
-
-  getStock = async (url,url2,ticker,apikey) => {
+  //Free limit reached, need to switch API
+  getStock = (url,ticker,host,apikey) => {
     try {
-      const res1 = await axios.get(`${url}${ticker}?apikey=${apikey}`);
-      const data1 = res1.data;
-      const res2 = await axios.get(`${url2}${ticker}?apikey=${apikey}`)
-      const data2 = res2.data;
-      const PE = data1[0].price / data2[0].eps;
-      console.log(data1)
-      this.setState({
-        companyInfo: [data1[0].companyName,data1[0].price],
-        financialInfo: [currencyFormat(data1[0].mktCap),roundToTwo(data1[0].beta),currencyFormat(data2[0].revenue),currencyFormat(data2[0].netIncome),currencyFormat(data2[0].eps), roundToTwo(PE)],
-        loading: false,
+      const res1 = axios({
+        "method":"GET",
+        "url":`${url}`,
+        "headers":{
+        "content-type":"application/octet-stream",
+        "x-rapidapi-host":`${host}`,
+        "x-rapidapi-key":`${apikey}`,
+        "useQueryString":true
+        },"params":{
+        "id":`${ticker}%3Aus`
+        }
       })
-      return data1
+      .then((response => {
+        let data = response.data.result[0].table;
+        let companyStatistics = {
+          'P/E': data[0].value,
+          'EPS': data[2].value,
+        }
+        //console.log(companyStatistics)
+        this.setState({
+          companyInfo: [companyStatistics],
+          loading: false,
+        })
+      }))
+      .catch((error) => {
+        console.log(error)
+      })
+      
     } catch (e) {
       console.log(e)
     }
